@@ -92,6 +92,63 @@ export function KanbanBoard() {
     });
   }, [setState]);
 
+  const handleGeneratePrompt = useCallback(
+    async (task: Task) => {
+      try {
+        const response = await fetch('/api/generate-prompt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: task.title,
+            description: task.description,
+            priority: task.priority,
+            attachments: task.attachments,
+            comments: task.comments,
+            assignee: task.assignee,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          console.error('Failed to generate prompt:', error);
+          alert('Failed to generate prompt. Please check your OpenAI API key.');
+          return;
+        }
+
+        const data = await response.json();
+        const generatedPrompt = data.prompt;
+
+        // Update the task with the generated prompt
+        setState((prev) => {
+          const updatedTask = {
+            ...task,
+            description: generatedPrompt,
+            aiGeneratedPrompt: generatedPrompt,
+            updatedAt: new Date(),
+          };
+
+          return {
+            ...prev,
+            tasks: {
+              ...prev.tasks,
+              [task.id]: updatedTask,
+            },
+          };
+        });
+
+        // Open the edit modal to show the generated prompt
+        setSelectedTask(task);
+        setIsAddCardModalOpen(true);
+      } catch (error) {
+        console.error('Error generating prompt:', error);
+        alert('Error generating prompt. Please try again.');
+      }
+    },
+    [setState]
+  );
+
   const handleSaveTask = useCallback(
     (title: string, description: string) => {
       setState((prev) => {
@@ -337,6 +394,7 @@ export function KanbanBoard() {
                 onDeleteTask={handleDeleteTask}
                 onEditTask={handleEditTask}
                 onDeleteColumn={handleDeleteColumn}
+                onGeneratePrompt={handleGeneratePrompt}
                 draggedTaskId={draggedTaskId}
               />
             ))}

@@ -6,6 +6,7 @@ export interface Task {
   attachments?: number;
   comments?: number;
   assignee?: string; // Initials or name for avatar
+  aiGeneratedPrompt?: string; // AI-generated prompt for Claude Code
   createdAt: Date;
   updatedAt: Date;
 }

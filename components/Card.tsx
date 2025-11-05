@@ -2,7 +2,7 @@
 
 import { Task } from '@/types/kanban';
 import { motion } from 'framer-motion';
-import { Flag, Calendar, Paperclip, MessageCircle, MoreHorizontal } from 'lucide-react';
+import { Flag, Calendar, Paperclip, MessageCircle, MoreHorizontal, Sparkles, Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface CardProps {
@@ -10,15 +10,29 @@ interface CardProps {
   isDragging?: boolean;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
+  onGeneratePrompt?: (task: Task) => Promise<void>;
 }
 
-export function Card({ task, isDragging = false, onDelete, onEdit }: CardProps) {
+export function Card({ task, isDragging = false, onDelete, onEdit, onGeneratePrompt }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handleGeneratePrompt = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onGeneratePrompt || isGeneratingPrompt) return;
+
+    setIsGeneratingPrompt(true);
+    try {
+      await onGeneratePrompt(task);
+    } finally {
+      setIsGeneratingPrompt(false);
+    }
+  };
 
   // Priority color mapping
   const priorityColors = {
@@ -129,10 +143,30 @@ export function Card({ task, isDragging = false, onDelete, onEdit }: CardProps) 
           {/* Avatar */}
           {task.assignee && (
             <div
-              className={`ml-auto w-5 h-5 rounded-full ${getAvatarColor(task.assignee)} flex items-center justify-center text-white text-[10px] font-medium`}
+              className={`w-5 h-5 rounded-full ${getAvatarColor(task.assignee)} flex items-center justify-center text-white text-[10px] font-medium`}
             >
               {task.assignee.substring(0, 2).toUpperCase()}
             </div>
+          )}
+
+          {/* AI Button */}
+          {onGeneratePrompt && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleGeneratePrompt}
+              disabled={isGeneratingPrompt}
+              className="ml-auto p-1.5 hover:bg-yellow-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Generate AI prompt"
+            >
+              {isGeneratingPrompt ? (
+                <Loader size={14} className="text-yellow-500 animate-spin" />
+              ) : (
+                <Sparkles size={14} className="text-yellow-500" />
+              )}
+            </motion.button>
           )}
         </div>
       )}

@@ -20,6 +20,7 @@ interface ColumnProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask: (task: Task) => void;
   onDeleteColumn: (columnId: string) => void;
+  onGeneratePrompt?: (task: Task) => Promise<void>;
   draggedTaskId?: string;
 }
 
@@ -30,6 +31,7 @@ export function Column({
   onDeleteTask,
   onEditTask,
   onDeleteColumn,
+  onGeneratePrompt,
   draggedTaskId,
 }: ColumnProps) {
   const { setNodeRef } = useDroppable({ id: column.id });
@@ -115,6 +117,7 @@ export function Column({
               isDragging={draggedTaskId === task.id}
               onDelete={onDeleteTask}
               onEdit={onEditTask}
+              onGeneratePrompt={onGeneratePrompt}
             />
           ))}
 
@@ -138,9 +141,10 @@ interface SortableCardProps {
   isDragging?: boolean;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
+  onGeneratePrompt?: (task: Task) => Promise<void>;
 }
 
-function SortableCard({ task, isDragging = false, onDelete, onEdit }: SortableCardProps) {
+function SortableCard({ task, isDragging = false, onDelete, onEdit, onGeneratePrompt }: SortableCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging: isSortableDragging } = useSortable({
     id: task.id,
   });
@@ -158,6 +162,7 @@ function SortableCard({ task, isDragging = false, onDelete, onEdit }: SortableCa
         isDragging={isDragging || isSortableDragging}
         onDelete={onDelete}
         onEdit={onEdit}
+        onGeneratePrompt={onGeneratePrompt}
       />
     </div>
   );
