@@ -2,7 +2,7 @@
 
 import { Task } from '@/types/kanban';
 import { motion } from 'framer-motion';
-import { Flag, Calendar, Paperclip, MessageCircle, MoreHorizontal, Sparkles, Loader } from 'lucide-react';
+import { Flag, Calendar, Paperclip, MessageCircle, Edit2, Sparkles, Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface CardProps {
@@ -10,10 +10,11 @@ interface CardProps {
   isDragging?: boolean;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
+  onViewDetails?: (task: Task) => void;
   onGeneratePrompt?: (task: Task) => Promise<void>;
 }
 
-export function Card({ task, isDragging = false, onDelete, onEdit, onGeneratePrompt }: CardProps) {
+export function Card({ task, isDragging = false, onDelete, onEdit, onViewDetails, onGeneratePrompt }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
@@ -73,15 +74,19 @@ export function Card({ task, isDragging = false, onDelete, onEdit, onGeneratePro
       transition={{ duration: 0.15 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      onDoubleClick={() => onEdit(task)}
+      onClick={() => onViewDetails?.(task)}
       className={`
-        group relative p-3 bg-white rounded-md border border-gray-200
-        cursor-grab transition-all duration-150
-        ${isDragging ? 'opacity-50 shadow-lg rotate-2' : 'hover:shadow-sm hover:border-gray-300'}
+        group relative p-3.5 bg-white rounded-lg border border-gray-200
+        cursor-pointer transition-all duration-200
+        ${
+          isDragging
+            ? 'opacity-50 shadow-xl rotate-2 border-gray-300'
+            : 'hover:shadow-md hover:border-gray-300 hover:bg-gray-50/30'
+        }
       `}
     >
-      {/* Priority Flag & Menu */}
-      <div className="flex items-start justify-between mb-2">
+      {/* Priority Flag & Edit Button */}
+      <div className="flex items-start justify-between mb-2.5">
         {task.priority && (
           <Flag
             size={14}
@@ -90,34 +95,42 @@ export function Card({ task, isDragging = false, onDelete, onEdit, onGeneratePro
         )}
         {isHovered && (
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onEdit(task);
             }}
-            className="ml-auto p-1 hover:bg-gray-100 rounded"
+            className="ml-auto p-1.5 hover:bg-gray-200 rounded-md transition-all duration-200 hover:shadow-sm active:scale-95 pointer-events-auto"
+            title="Edit card"
+            type="button"
           >
-            <MoreHorizontal size={14} className="text-gray-400" />
+            <Edit2 size={16} className="text-gray-600" />
           </motion.button>
         )}
       </div>
 
       {/* Card Title */}
-      <h3 className="font-medium text-gray-900 mb-1 break-words text-sm leading-snug">
+      <h3 className="font-semibold text-gray-900 mb-1.5 break-words text-sm leading-snug">
         {task.title}
       </h3>
 
       {/* Card Description/Category */}
       {task.description && (
-        <p className="text-gray-500 text-xs mb-3 line-clamp-2 leading-relaxed">
+        <p className="text-gray-600 text-xs mb-3.5 line-clamp-2 leading-relaxed">
           {task.description}
         </p>
       )}
 
       {/* Metadata Row */}
       {isMounted && (
-        <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex flex-wrap items-center gap-2.5 text-xs text-gray-500 pt-2.5 border-t border-gray-100">
           {/* Date */}
           <div className="flex items-center gap-1">
             <Calendar size={12} className="text-gray-400" />
@@ -143,7 +156,7 @@ export function Card({ task, isDragging = false, onDelete, onEdit, onGeneratePro
           {/* Avatar */}
           {task.assignee && (
             <div
-              className={`w-5 h-5 rounded-full ${getAvatarColor(task.assignee)} flex items-center justify-center text-white text-[10px] font-medium`}
+              className={`w-5 h-5 rounded-full ${getAvatarColor(task.assignee)} flex items-center justify-center text-white text-[10px] font-bold shadow-sm`}
             >
               {task.assignee.substring(0, 2).toUpperCase()}
             </div>
@@ -154,11 +167,11 @@ export function Card({ task, isDragging = false, onDelete, onEdit, onGeneratePro
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleGeneratePrompt}
               disabled={isGeneratingPrompt}
-              className="ml-auto p-1.5 hover:bg-yellow-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ml-auto p-1.5 hover:bg-yellow-100 rounded-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-sm"
               title="Generate AI prompt"
             >
               {isGeneratingPrompt ? (

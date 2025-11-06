@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Task } from '@/types/kanban';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -23,6 +23,14 @@ export function AddCardModal({
   const [title, setTitle] = useState(initialTask?.title || '');
   const [description, setDescription] = useState(initialTask?.description || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Update form fields when initialTask changes
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(initialTask?.title || '');
+      setDescription(initialTask?.description || '');
+    }
+  }, [isOpen, initialTask]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,8 +135,8 @@ export function AddCardModal({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Add notes about this task (optional)..."
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  rows={6}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y"
                   disabled={isSubmitting}
                 />
               </motion.div>

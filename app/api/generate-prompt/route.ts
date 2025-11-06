@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: NextRequest) {
   try {
+    const { title, description, priority, attachments, comments, assignee, apiKey } =
+      await request.json();
+
     // Validate API key
-    if (!process.env.OPENAI_API_KEY) {
+    if (!apiKey || typeof apiKey !== 'string') {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
+        { error: 'OpenAI API key is required. Please add your API key in Settings.' },
+        { status: 400 }
       );
     }
 
-    const { title, description, priority, attachments, comments, assignee } =
-      await request.json();
+    // Initialize OpenAI client with user's API key
+    const openai = new OpenAI({
+      apiKey: apiKey,
+    });
 
     if (!title || typeof title !== 'string') {
       return NextResponse.json(
@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
     if (assignee) context += `\nAssigned to: ${assignee}`;
 
     // Generate prompt using OpenAI
-    const message = await openai.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4',
       max_tokens: 1024,
       messages: [
         {
@@ -59,8 +59,7 @@ Just provide the prompt text, without any preamble or explanation.`,
     });
 
     // Extract the generated prompt
-    const generatedPrompt =
-      message.content[0].type === 'text' ? message.content[0].text : '';
+    const generatedPrompt = response.choices[0].message.content || '';
 
     return NextResponse.json({ prompt: generatedPrompt });
   } catch (error) {

@@ -20,8 +20,10 @@ interface ColumnProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask: (task: Task) => void;
   onDeleteColumn: (columnId: string) => void;
+  onViewDetails?: (task: Task) => void;
   onGeneratePrompt?: (task: Task) => Promise<void>;
   draggedTaskId?: string;
+  isModalOpen?: boolean;
 }
 
 export function Column({
@@ -31,10 +33,15 @@ export function Column({
   onDeleteTask,
   onEditTask,
   onDeleteColumn,
+  onViewDetails,
   onGeneratePrompt,
   draggedTaskId,
+  isModalOpen = false,
 }: ColumnProps) {
-  const { setNodeRef } = useDroppable({ id: column.id });
+  const { setNodeRef } = useDroppable({
+    id: column.id,
+    disabled: isModalOpen,
+  });
   const [isHovered, setIsHovered] = useState(false);
 
   // Icon color mapping based on column color
@@ -117,7 +124,9 @@ export function Column({
               isDragging={draggedTaskId === task.id}
               onDelete={onDeleteTask}
               onEdit={onEditTask}
+              onViewDetails={onViewDetails}
               onGeneratePrompt={onGeneratePrompt}
+              isModalOpen={isModalOpen}
             />
           ))}
 
@@ -141,12 +150,23 @@ interface SortableCardProps {
   isDragging?: boolean;
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
+  onViewDetails?: (task: Task) => void;
   onGeneratePrompt?: (task: Task) => Promise<void>;
+  isModalOpen?: boolean;
 }
 
-function SortableCard({ task, isDragging = false, onDelete, onEdit, onGeneratePrompt }: SortableCardProps) {
+function SortableCard({
+  task,
+  isDragging = false,
+  onDelete,
+  onEdit,
+  onViewDetails,
+  onGeneratePrompt,
+  isModalOpen = false,
+}: SortableCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging: isSortableDragging } = useSortable({
     id: task.id,
+    disabled: isModalOpen,
   });
 
   const style = {
@@ -156,12 +176,13 @@ function SortableCard({ task, isDragging = false, onDelete, onEdit, onGeneratePr
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes} {...(isModalOpen ? {} : listeners)}>
       <Card
         task={task}
         isDragging={isDragging || isSortableDragging}
         onDelete={onDelete}
         onEdit={onEdit}
+        onViewDetails={onViewDetails}
         onGeneratePrompt={onGeneratePrompt}
       />
     </div>

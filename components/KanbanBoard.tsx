@@ -5,6 +5,10 @@ import { Task, Column, KanbanState } from '@/types/kanban';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Column as ColumnComponent } from './Column';
 import { AddCardModal } from './AddCardModal';
+import { CardDetailsModal } from './CardDetailsModal';
+import { SettingsModal } from './SettingsModal';
+import { ExportImportModal } from './ExportImportModal';
+import { ChangelogModal } from './ChangelogModal';
 import { AddColumnButton } from './AddColumnButton';
 import {
   DndContext,
@@ -12,11 +16,14 @@ import {
   DragStartEvent,
   DragOverlay,
   closestCorners,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core';
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
 import { Card } from './Card';
-import { Plus, Filter, ArrowUpDown, LayoutGrid, ChevronDown } from 'lucide-react';
+import { Plus, Filter, ArrowUpDown, LayoutGrid, ChevronDown, Settings, Save } from 'lucide-react';
 
 const DEFAULT_COLUMNS: Column[] = [
   {
@@ -52,9 +59,23 @@ export function KanbanBoard() {
   });
 
   const [isAddCardModalOpen, setIsAddCardModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isExportImportModalOpen, setIsExportImportModalOpen] = useState(false);
+  const [isChangelogModalOpen, setIsChangelogModalOpen] = useState(false);
   const [selectedColumnId, setSelectedColumnId] = useState<string>('');
   const [selectedTask, setSelectedTask] = useState<Task | undefined>();
+  const [viewingTask, setViewingTask] = useState<Task | null>(null);
   const [draggedTaskId, setDraggedTaskId] = useState<string>('');
+
+  // Configure sensors with activation constraint to prevent drag on click
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Requires 8px movement before drag activates - allows clicks to work
+      },
+    })
+  );
 
   // Initialize columns if they don't exist
   if (isLoaded && state.columns.length === 0) {
@@ -78,6 +99,11 @@ export function KanbanBoard() {
     setIsAddCardModalOpen(true);
   }, []);
 
+  const handleViewDetails = useCallback((task: Task) => {
+    setViewingTask(task);
+    setIsDetailsModalOpen(true);
+  }, []);
+
   const handleDeleteTask = useCallback((taskId: string) => {
     setState((prev) => {
       const { [taskId]: deletedTask, ...remainingTasks } = prev.tasks;
@@ -95,6 +121,14 @@ export function KanbanBoard() {
   const handleGeneratePrompt = useCallback(
     async (task: Task) => {
       try {
+        // Get API key from localStorage
+        const apiKey = localStorage.getItem('openai_api_key');
+        if (!apiKey) {
+          alert('Please add your OpenAI API key in Settings before using AI features.');
+          setIsSettingsModalOpen(true);
+          return;
+        }
+
         const response = await fetch('/api/generate-prompt', {
           method: 'POST',
           headers: {
@@ -107,13 +141,14 @@ export function KanbanBoard() {
             attachments: task.attachments,
             comments: task.comments,
             assignee: task.assignee,
+            apiKey: apiKey,
           }),
         });
 
         if (!response.ok) {
           const error = await response.json();
           console.error('Failed to generate prompt:', error);
-          alert('Failed to generate prompt. Please check your OpenAI API key.');
+          alert(`Failed to generate prompt: ${error.error || 'Unknown error'}`);
           return;
         }
 
@@ -236,12 +271,29 @@ export function KanbanBoard() {
     [setState]
   );
 
+  const handleImportBoard = useCallback(
+    (importedState: KanbanState) => {
+      setState(importedState);
+    },
+    [setState]
+  );
+
   const handleDragStart = (event: DragStartEvent) => {
+    // Prevent dragging when modals are open
+    if (isAddCardModalOpen || isDetailsModalOpen) {
+      return;
+    }
     setDraggedTaskId(event.active.id as string);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggedTaskId('');
+
+    // Prevent operations when modals are open
+    if (isAddCardModalOpen || isDetailsModalOpen) {
+      return;
+    }
+
     const { active, over } = event;
 
     if (!over) return;
@@ -343,7 +395,7 @@ export function KanbanBoard() {
   }
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCorners} sensors={sensors}>
       <div className="min-h-screen bg-white">
         {/* Top Header */}
         <div className="border-b border-gray-200 bg-white">
@@ -355,6 +407,12 @@ export function KanbanBoard() {
               <button className="flex items-center gap-1 text-sm text-gray-600 hover:bg-gray-100 px-2 py-1 rounded">
                 <span>5 Views</span>
                 <ChevronDown size={14} />
+              </button>
+              <button
+                onClick={() => setIsChangelogModalOpen(true)}
+                className="ml-auto text-xs text-indigo-600 hover:text-indigo-700 hover:underline font-medium"
+              >
+                What's New
               </button>
             </div>
 
@@ -378,6 +436,22 @@ export function KanbanBoard() {
                 <ArrowUpDown size={14} />
                 Ordering
               </button>
+              <button
+                onClick={() => setIsExportImportModalOpen(true)}
+                className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors ml-auto"
+                title="Export/Import"
+              >
+                <Save size={14} />
+                Save/Export
+              </button>
+              <button
+                onClick={() => setIsSettingsModalOpen(true)}
+                className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors"
+                title="Settings"
+              >
+                <Settings size={14} />
+                Settings
+              </button>
             </div>
           </div>
         </div>
@@ -394,8 +468,10 @@ export function KanbanBoard() {
                 onDeleteTask={handleDeleteTask}
                 onEditTask={handleEditTask}
                 onDeleteColumn={handleDeleteColumn}
+                onViewDetails={handleViewDetails}
                 onGeneratePrompt={handleGeneratePrompt}
                 draggedTaskId={draggedTaskId}
+                isModalOpen={isAddCardModalOpen || isDetailsModalOpen}
               />
             ))}
 
@@ -429,6 +505,41 @@ export function KanbanBoard() {
         onSubmit={handleSaveTask}
         initialTask={selectedTask}
         columnTitle={state.columns.find((col) => col.id === selectedColumnId)?.title}
+      />
+
+      {/* Card Details Modal */}
+      <CardDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setViewingTask(null);
+        }}
+        onEdit={(task) => {
+          setIsDetailsModalOpen(false);
+          setSelectedTask(task);
+          setIsAddCardModalOpen(true);
+        }}
+        task={viewingTask}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+      />
+
+      {/* Export/Import Modal */}
+      <ExportImportModal
+        isOpen={isExportImportModalOpen}
+        onClose={() => setIsExportImportModalOpen(false)}
+        currentState={state}
+        onImport={handleImportBoard}
+      />
+
+      {/* Changelog Modal */}
+      <ChangelogModal
+        isOpen={isChangelogModalOpen}
+        onClose={() => setIsChangelogModalOpen(false)}
       />
     </DndContext>
   );
