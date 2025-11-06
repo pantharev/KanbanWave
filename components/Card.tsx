@@ -8,13 +8,12 @@ import { useState, useEffect } from 'react';
 interface CardProps {
   task: Task;
   isDragging?: boolean;
-  onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
   onViewDetails?: (task: Task) => void;
   onGeneratePrompt?: (task: Task) => Promise<void>;
 }
 
-export function Card({ task, isDragging = false, onDelete, onEdit, onViewDetails, onGeneratePrompt }: CardProps) {
+export function Card({ task, isDragging = false, onEdit, onViewDetails, onGeneratePrompt }: CardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);

@@ -104,20 +104,6 @@ export function KanbanBoard() {
     setIsDetailsModalOpen(true);
   }, []);
 
-  const handleDeleteTask = useCallback((taskId: string) => {
-    setState((prev) => {
-      const { [taskId]: deletedTask, ...remainingTasks } = prev.tasks;
-      return {
-        ...prev,
-        tasks: remainingTasks,
-        columns: prev.columns.map((col) => ({
-          ...col,
-          taskIds: col.taskIds.filter((id) => id !== taskId),
-        })),
-      };
-    });
-  }, [setState]);
-
   const handleGeneratePrompt = useCallback(
     async (task: Task) => {
       try {
@@ -465,7 +451,6 @@ export function KanbanBoard() {
                 column={column}
                 tasks={column.tasks}
                 onAddTask={handleAddTask}
-                onDeleteTask={handleDeleteTask}
                 onEditTask={handleEditTask}
                 onDeleteColumn={handleDeleteColumn}
                 onViewDetails={handleViewDetails}
@@ -489,7 +474,6 @@ export function KanbanBoard() {
           <Card
             task={state.tasks[draggedTaskId] || { id: '', title: '', description: '', createdAt: new Date(), updatedAt: new Date() }}
             isDragging={true}
-            onDelete={() => {}}
             onEdit={() => {}}
           />
         ) : null}

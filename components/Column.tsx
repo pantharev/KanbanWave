@@ -17,7 +17,6 @@ interface ColumnProps {
   column: ColumnType;
   tasks: Task[];
   onAddTask: (columnId: string) => void;
-  onDeleteTask: (taskId: string) => void;
   onEditTask: (task: Task) => void;
   onDeleteColumn: (columnId: string) => void;
   onViewDetails?: (task: Task) => void;
@@ -30,7 +29,6 @@ export function Column({
   column,
   tasks,
   onAddTask,
-  onDeleteTask,
   onEditTask,
   onDeleteColumn,
   onViewDetails,
@@ -122,7 +120,6 @@ export function Column({
               key={task.id}
               task={task}
               isDragging={draggedTaskId === task.id}
-              onDelete={onDeleteTask}
               onEdit={onEditTask}
               onViewDetails={onViewDetails}
               onGeneratePrompt={onGeneratePrompt}
@@ -148,7 +145,6 @@ export function Column({
 interface SortableCardProps {
   task: Task;
   isDragging?: boolean;
-  onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
   onViewDetails?: (task: Task) => void;
   onGeneratePrompt?: (task: Task) => Promise<void>;
@@ -158,7 +154,6 @@ interface SortableCardProps {
 function SortableCard({
   task,
   isDragging = false,
-  onDelete,
   onEdit,
   onViewDetails,
   onGeneratePrompt,
@@ -180,7 +175,6 @@ function SortableCard({
       <Card
         task={task}
         isDragging={isDragging || isSortableDragging}
-        onDelete={onDelete}
         onEdit={onEdit}
         onViewDetails={onViewDetails}
         onGeneratePrompt={onGeneratePrompt}
