@@ -30,7 +30,7 @@ export function Column({
   tasks,
   onAddTask,
   onEditTask,
-  onDeleteColumn,
+  onDeleteColumn: _onDeleteColumn,
   onViewDetails,
   onGeneratePrompt,
   draggedTaskId,
