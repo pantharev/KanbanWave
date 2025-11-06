@@ -2,7 +2,7 @@
 
 import { Task } from '@/types/kanban';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Edit2, Flag, Calendar, Paperclip, MessageCircle } from 'lucide-react';
+import { X, Edit2, Flag, Paperclip, MessageCircle } from 'lucide-react';
 
 interface CardDetailsModalProps {
   isOpen: boolean;
