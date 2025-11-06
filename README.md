@@ -1,6 +1,6 @@
-# Vibe Code Manager
+# KanbanWave 🌊
 
-A beautiful, privacy-first Kanban board project management app built with Next.js, React, and Tailwind CSS. Manage your tasks with drag-and-drop functionality, AI-powered prompt generation, and complete data privacy.
+KanbanWave is an open-source, AI-powered Kanban board built with Next.js and Tailwind. Save tasks locally in your browser, enhance titles and descriptions with AI, and export your projects with ease. Simple, fast, privacy-first, and designed to keep your workflow in motion.
 
 ## Features
 
@@ -50,8 +50,8 @@ A beautiful, privacy-first Kanban board project management app built with Next.j
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/vibe-code-manager.git
-cd vibe-code-manager
+git clone https://github.com/pantharev/KanbanWave.git
+cd KanbanWave
 ```
 
 2. Install dependencies:
@@ -118,7 +118,7 @@ yarn start
 ## Project Structure
 
 ```
-vibe-code-manager/
+KanbanWave/
 ├── app/
 │   ├── api/generate-prompt/    # AI prompt generation endpoint
 │   ├── layout.tsx              # Root layout
@@ -151,11 +151,11 @@ vibe-code-manager/
 
 ## Roadmap
 
-### Cloud Integration
+### Cloud Export/Import (Optional)
 - [ ] Export to Google Drive
 - [ ] Export to OneDrive
 - [ ] Export to Dropbox
-- [ ] Auto-sync with cloud services (optional)
+- [ ] Auto-backup to cloud services
 
 ### Calendar Integration
 - [ ] Google Calendar sync
@@ -170,6 +170,12 @@ vibe-code-manager/
 - [ ] Custom card colors and styles
 - [ ] Improved overall look and feel
 - [ ] Dark mode
+
+### AI Enhancements
+- [ ] AI-powered title suggestions
+- [ ] AI-powered description enhancements
+- [ ] Smart task categorization
+- [ ] Automated task breakdown
 
 ### Task Management
 - [ ] Task priorities and labels
@@ -214,12 +220,12 @@ This project is open source and available under the [MIT License](LICENSE).
 ## Support
 
 If you encounter any issues or have questions, please:
-1. Check the [Issues](https://github.com/yourusername/vibe-code-manager/issues) page
+1. Check the [Issues](https://github.com/pantharev/KanbanWave/issues) page
 2. Open a new issue if your problem isn't already listed
 3. Provide as much detail as possible
 
 ---
 
-**Made with ❤️ for vibe coding**
+**Ride the wave of productivity 🌊**
 
-*Privacy-first • No tracking • No sign-up • Your data stays yours*
+*Privacy-first • Open-source • AI-powered • Keep your workflow in motion*
