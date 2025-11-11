@@ -515,8 +515,8 @@ export function KanbanBoard() {
         </div>
 
         {/* Kanban Board Container */}
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div ref={scrollContainerRef} className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 sm:pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-180px)]">
+          <div ref={scrollContainerRef} className="flex gap-3 sm:gap-4 overflow-x-auto pb-8 sm:pb-12 -mx-4 px-4 sm:mx-0 sm:px-0 h-full">
             {columnsToDisplay.map((column) => (
               <ColumnComponent
                 key={column.id}

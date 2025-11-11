@@ -117,7 +117,7 @@ export function Column({
           ref={setNodeRef}
           layout
           className="flex-1 p-2 sm:p-3 space-y-2 sm:space-y-3 overflow-y-auto"
-          style={{ minHeight: '200px' }}
+          style={{ minHeight: '400px' }}
         >
           {tasks.map((task) => (
             <SortableCard
