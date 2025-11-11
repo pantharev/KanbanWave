@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Task, Column, KanbanState } from '@/types/kanban';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Column as ColumnComponent } from './Column';
@@ -14,9 +14,11 @@ import {
   DndContext,
   DragEndEvent,
   DragStartEvent,
+  DragMoveEvent,
   DragOverlay,
-  closestCorners,
-  PointerSensor,
+  closestCenter,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -68,11 +70,23 @@ export function KanbanBoard() {
   const [viewingTask, setViewingTask] = useState<Task | null>(null);
   const [draggedTaskId, setDraggedTaskId] = useState<string>('');
 
-  // Configure sensors with activation constraint to prevent drag on click
+  // Ref for auto-scrolling during drag
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Configure sensors for desktop and mobile
+  // MouseSensor for desktop: requires 8px movement before drag
+  // TouchSensor for mobile: requires 250ms press before drag (allows scrolling)
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 8, // Requires 8px movement before drag activates - allows clicks to work
+        distance: 8, // Requires 8px movement before drag activates - allows clicks
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,      // Hold for 250ms before drag starts on mobile
+        tolerance: 5,    // Allow 5px movement during hold
       },
     })
   );
@@ -264,6 +278,50 @@ export function KanbanBoard() {
     [setState]
   );
 
+  // Auto-scroll during drag when near screen edges (mobile support)
+  const handleDragMove = useCallback((event: DragMoveEvent) => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const { activatorEvent } = event;
+    if (!activatorEvent) return;
+
+    // Get the pointer/touch position - works for both mouse and touch events
+    const clientX = (activatorEvent as any).clientX || 0;
+    if (!clientX) return;
+
+    const edgeThreshold = 100; // pixels from edge to trigger scroll
+    const scrollSpeed = 15; // pixels per frame
+
+    // Clear existing interval
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+      autoScrollIntervalRef.current = null;
+    }
+
+    // Scroll right when near right edge
+    if (clientX > window.innerWidth - edgeThreshold) {
+      autoScrollIntervalRef.current = setInterval(() => {
+        scrollContainer.scrollLeft += scrollSpeed;
+      }, 16); // ~60fps
+    }
+    // Scroll left when near left edge
+    else if (clientX < edgeThreshold) {
+      autoScrollIntervalRef.current = setInterval(() => {
+        scrollContainer.scrollLeft -= scrollSpeed;
+      }, 16);
+    }
+  }, []);
+
+  // Cleanup auto-scroll on drag end
+  useEffect(() => {
+    return () => {
+      if (autoScrollIntervalRef.current) {
+        clearInterval(autoScrollIntervalRef.current);
+      }
+    };
+  }, []);
+
   const handleDragStart = (event: DragStartEvent) => {
     // Prevent dragging when modals are open
     if (isAddCardModalOpen || isDetailsModalOpen) {
@@ -274,6 +332,12 @@ export function KanbanBoard() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggedTaskId('');
+
+    // Clear auto-scroll interval
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+      autoScrollIntervalRef.current = null;
+    }
 
     // Prevent operations when modals are open
     if (isAddCardModalOpen || isDetailsModalOpen) {
@@ -381,7 +445,7 @@ export function KanbanBoard() {
   }
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCorners} sensors={sensors}>
+    <DndContext onDragStart={handleDragStart} onDragMove={handleDragMove} onDragEnd={handleDragEnd} collisionDetection={closestCenter} sensors={sensors}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         {/* Top Header with Gradient */}
         <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-lg">
@@ -452,7 +516,7 @@ export function KanbanBoard() {
 
         {/* Kanban Board Container */}
         <div className="p-4 sm:p-6 lg:p-8">
-          <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 sm:pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div ref={scrollContainerRef} className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 sm:pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
             {columnsToDisplay.map((column) => (
               <ColumnComponent
                 key={column.id}
@@ -476,14 +540,16 @@ export function KanbanBoard() {
         </div>
       </div>
 
-      {/* Drag Overlay */}
+      {/* Drag Overlay - Enhanced for mobile visibility */}
       <DragOverlay>
         {draggedTaskId ? (
-          <Card
-            task={state.tasks[draggedTaskId] || { id: '', title: '', description: '', createdAt: new Date(), updatedAt: new Date() }}
-            isDragging={true}
-            onEdit={() => {}}
-          />
+          <div className="transform scale-105 sm:scale-100 opacity-95 sm:opacity-90">
+            <Card
+              task={state.tasks[draggedTaskId] || { id: '', title: '', description: '', createdAt: new Date(), updatedAt: new Date() }}
+              isDragging={true}
+              onEdit={() => {}}
+            />
+          </div>
         ) : null}
       </DragOverlay>
 
