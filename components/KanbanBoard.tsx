@@ -23,7 +23,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
 import { Card } from './Card';
-import { Plus, Filter, ArrowUpDown, LayoutGrid, ChevronDown, Settings, Save } from 'lucide-react';
+import { Plus, Filter, ArrowUpDown, LayoutGrid, Settings, Save } from 'lucide-react';
 
 const DEFAULT_COLUMNS: Column[] = [
   {
@@ -382,60 +382,64 @@ export function KanbanBoard() {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCorners} sensors={sensors}>
-      <div className="min-h-screen bg-white">
-        {/* Top Header */}
-        <div className="border-b border-gray-200 bg-white">
-          <div className="px-6 py-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        {/* Top Header with Gradient */}
+        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-lg">
+          <div className="px-6 py-6">
             {/* Title and View Selector */}
-            <div className="flex items-center gap-3 mb-4">
-              <LayoutGrid size={20} className="text-purple-600" />
-              <h1 className="text-xl font-semibold text-gray-900">Actions</h1>
-              <button className="flex items-center gap-1 text-sm text-gray-600 hover:bg-gray-100 px-2 py-1 rounded">
-                <span>5 Views</span>
-                <ChevronDown size={14} />
-              </button>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <LayoutGrid size={24} className="text-white" />
+                </div>
+                <h1 className="text-2xl font-bold text-white tracking-tight">KanbanWave</h1>
+              </div>
+              <div className="flex items-center gap-2 text-white/80 text-sm">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span>All data saved locally</span>
+              </div>
               <button
                 onClick={() => setIsChangelogModalOpen(true)}
-                className="ml-auto text-xs text-indigo-600 hover:text-indigo-700 hover:underline font-medium"
+                className="ml-auto text-sm text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg transition-all duration-200 backdrop-blur-sm font-medium"
               >
-                What's New
+                What's New ✨
               </button>
             </div>
 
             {/* Action Toolbar */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 flex-wrap">
               <button
                 onClick={() => {
                   setSelectedColumnId('todo');
                   setIsAddCardModalOpen(true);
                 }}
-                className="flex items-center gap-2 px-3 py-1.5 bg-black text-white text-sm rounded-md hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-600 text-sm font-semibold rounded-xl hover:bg-white/95 hover:shadow-lg transition-all duration-200 transform hover:scale-105"
               >
-                <Plus size={16} />
-                New Action
+                <Plus size={18} />
+                New Task
               </button>
-              <button className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors">
-                <Filter size={14} />
+              <button className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20">
+                <Filter size={16} />
                 Filter
               </button>
-              <button className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors">
-                <ArrowUpDown size={14} />
-                Ordering
+              <button className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20">
+                <ArrowUpDown size={16} />
+                Sort
               </button>
               <button
                 onClick={() => setIsExportImportModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors ml-auto"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 ml-auto border border-white/20"
                 title="Export/Import"
               >
-                <Save size={14} />
+                <Save size={16} />
                 Save/Export
               </button>
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
                 title="Settings"
               >
-                <Settings size={14} />
+                <Settings size={16} />
                 Settings
               </button>
             </div>
@@ -443,8 +447,8 @@ export function KanbanBoard() {
         </div>
 
         {/* Kanban Board Container */}
-        <div className="p-6">
-          <div className="flex gap-3 overflow-x-auto pb-4">
+        <div className="p-8">
+          <div className="flex gap-4 overflow-x-auto pb-6">
             {columnsToDisplay.map((column) => (
               <ColumnComponent
                 key={column.id}

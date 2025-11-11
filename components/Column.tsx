@@ -60,45 +60,49 @@ export function Column({
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 10 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.3 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="flex-1 min-w-[280px] max-w-[350px] flex flex-col bg-gray-50/50 rounded-lg"
+      className="flex-1 min-w-[300px] max-w-[380px] flex flex-col bg-white/60 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50"
     >
       {/* Minimal Header */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-200/50">
+      <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-200/50">
         {/* Column Icon/Indicator */}
-        <Circle size={8} className={`${iconColor} fill-current`} />
+        <Circle size={10} className={`${iconColor} fill-current drop-shadow-sm`} />
 
         {/* Column Title */}
-        <h2 className="font-semibold text-sm text-gray-700 truncate">
+        <h2 className="font-bold text-sm text-gray-800 truncate">
           {column.icon} {column.title}
         </h2>
 
         {/* Task Count Badge */}
-        <span className="text-xs text-gray-500 bg-gray-200 px-1.5 py-0.5 rounded-full">
+        <span className="text-xs font-semibold text-gray-600 bg-gradient-to-br from-gray-100 to-gray-200 px-2 py-1 rounded-full">
           {tasks.length}
         </span>
 
         {/* Actions */}
-        <div className="ml-auto flex items-center gap-1">
-          <button
+        <div className="ml-auto flex items-center gap-1.5">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => onAddTask(column.id)}
-            className="p-1 hover:bg-gray-200 rounded transition-colors"
+            className="p-1.5 hover:bg-indigo-100 rounded-lg transition-all duration-200"
             title="Add card"
           >
-            <Plus size={14} className="text-gray-500" />
-          </button>
+            <Plus size={16} className="text-indigo-600" />
+          </motion.button>
 
           {isHovered && (
             <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => {}}
-              className="p-1 hover:bg-gray-200 rounded transition-colors"
+              className="p-1.5 hover:bg-gray-200 rounded-lg transition-all duration-200"
               title="Column options"
             >
-              <MoreHorizontal size={14} className="text-gray-500" />
+              <MoreHorizontal size={16} className="text-gray-600" />
             </motion.button>
           )}
         </div>
@@ -112,8 +116,8 @@ export function Column({
         <motion.div
           ref={setNodeRef}
           layout
-          className="flex-1 p-2 space-y-2 overflow-y-auto"
-          style={{ minHeight: '200px' }}
+          className="flex-1 p-3 space-y-3 overflow-y-auto"
+          style={{ minHeight: '240px' }}
         >
           {tasks.map((task) => (
             <SortableCard

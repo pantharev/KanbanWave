@@ -70,17 +70,17 @@ export function Card({ task, isDragging = false, onEdit, onViewDetails, onGenera
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.2 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       onClick={() => onViewDetails?.(task)}
       className={`
-        group relative p-3.5 bg-white rounded-lg border border-gray-200
-        cursor-pointer transition-all duration-200
+        group relative p-4 bg-white rounded-xl border
+        cursor-pointer transition-all duration-300
         ${
           isDragging
-            ? 'opacity-50 shadow-xl rotate-2 border-gray-300'
-            : 'hover:shadow-md hover:border-gray-300 hover:bg-gray-50/30'
+            ? 'opacity-60 shadow-2xl rotate-3 border-indigo-300 scale-105'
+            : 'border-gray-200 hover:shadow-xl hover:border-indigo-200 hover:-translate-y-1 hover:scale-102'
         }
       `}
     >
@@ -97,6 +97,8 @@ export function Card({ task, isDragging = false, onEdit, onViewDetails, onGenera
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onMouseDown={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -106,11 +108,11 @@ export function Card({ task, isDragging = false, onEdit, onViewDetails, onGenera
               e.stopPropagation();
               onEdit(task);
             }}
-            className="ml-auto p-1.5 hover:bg-gray-200 rounded-md transition-all duration-200 hover:shadow-sm active:scale-95 pointer-events-auto"
+            className="ml-auto p-2 hover:bg-indigo-100 rounded-lg transition-all duration-200 hover:shadow-md active:scale-95 pointer-events-auto bg-gray-50"
             title="Edit card"
             type="button"
           >
-            <Edit2 size={16} className="text-gray-600" />
+            <Edit2 size={16} className="text-indigo-600" />
           </motion.button>
         )}
       </div>
@@ -170,13 +172,13 @@ export function Card({ task, isDragging = false, onEdit, onViewDetails, onGenera
               whileTap={{ scale: 0.95 }}
               onClick={handleGeneratePrompt}
               disabled={isGeneratingPrompt}
-              className="ml-auto p-1.5 hover:bg-yellow-100 rounded-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-sm"
+              className="ml-auto p-2 hover:bg-gradient-to-r hover:from-yellow-100 hover:to-orange-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md bg-yellow-50"
               title="Generate AI prompt"
             >
               {isGeneratingPrompt ? (
-                <Loader size={14} className="text-yellow-500 animate-spin" />
+                <Loader size={16} className="text-orange-500 animate-spin" />
               ) : (
-                <Sparkles size={14} className="text-yellow-500" />
+                <Sparkles size={16} className="text-orange-500" />
               )}
             </motion.button>
           )}

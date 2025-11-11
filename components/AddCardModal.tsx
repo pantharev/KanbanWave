@@ -70,20 +70,24 @@ export function AddCardModal({
             <motion.form
               onClick={(e) => e.stopPropagation()}
               onSubmit={handleSubmit}
-              className="w-full max-w-md bg-white rounded-lg shadow-xl p-6"
+              className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-gray-100"
             >
               {/* Header */}
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {initialTask ? 'Edit Card' : 'Add New Card'}
-                </h2>
+                <div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    {initialTask ? 'Edit Task' : 'Create New Task'}
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">Organize your workflow</p>
+                </div>
                 <motion.button
-                  whileHover={{ rotate: 90 }}
+                  whileHover={{ rotate: 90, scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   type="button"
                   onClick={onClose}
-                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
                 >
-                  <X size={24} />
+                  <X size={20} className="text-gray-600" />
                 </motion.button>
               </div>
 
@@ -148,22 +152,24 @@ export function AddCardModal({
                 transition={{ delay: 0.2 }}
                 className="flex gap-3"
               >
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={onClose}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-semibold disabled:opacity-50"
+                  className="flex-1 px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold disabled:opacity-50 border border-gray-200"
                 >
                   Cancel
-                </button>
+                </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={!title.trim() || isSubmitting}
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/30"
                 >
-                  {isSubmitting ? 'Creating...' : initialTask ? 'Update Card' : 'Add Card'}
+                  {isSubmitting ? 'Creating...' : initialTask ? 'Update Task' : 'Create Task'}
                 </motion.button>
               </motion.div>
             </motion.form>
