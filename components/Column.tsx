@@ -63,10 +63,10 @@ export function Column({
       transition={{ duration: 0.3 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="flex-1 min-w-[300px] max-w-[380px] flex flex-col bg-white/60 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50"
+      className="flex-1 min-w-[280px] sm:min-w-[300px] max-w-[340px] sm:max-w-[380px] flex flex-col bg-white/60 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-sm border border-gray-200/50"
     >
       {/* Minimal Header */}
-      <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-200/50">
+      <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 border-b border-gray-200/50">
         {/* Column Icon/Indicator */}
         <Circle size={10} className={`${iconColor} fill-current drop-shadow-sm`} />
 
@@ -116,8 +116,8 @@ export function Column({
         <motion.div
           ref={setNodeRef}
           layout
-          className="flex-1 p-3 space-y-3 overflow-y-auto"
-          style={{ minHeight: '240px' }}
+          className="flex-1 p-2 sm:p-3 space-y-2 sm:space-y-3 overflow-y-auto"
+          style={{ minHeight: '200px' }}
         >
           {tasks.map((task) => (
             <SortableCard

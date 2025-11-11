@@ -70,24 +70,24 @@ export function AddCardModal({
             <motion.form
               onClick={(e) => e.stopPropagation()}
               onSubmit={handleSubmit}
-              className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-gray-100"
+              className="w-full max-w-md bg-white rounded-xl sm:rounded-2xl shadow-2xl p-5 sm:p-8 border border-gray-100 max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-start sm:items-center mb-4 sm:mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                     {initialTask ? 'Edit Task' : 'Create New Task'}
                   </h2>
-                  <p className="text-sm text-gray-500 mt-1">Organize your workflow</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Organize your workflow</p>
                 </div>
                 <motion.button
                   whileHover={{ rotate: 90, scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   type="button"
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors"
                 >
-                  <X size={20} className="text-gray-600" />
+                  <X size={18} className="text-gray-600 sm:w-5 sm:h-5" />
                 </motion.button>
               </div>
 
@@ -158,7 +158,7 @@ export function AddCardModal({
                   type="button"
                   onClick={onClose}
                   disabled={isSubmitting}
-                  className="flex-1 px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold disabled:opacity-50 border border-gray-200"
+                  className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-gray-700 bg-gray-100 rounded-lg sm:rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold disabled:opacity-50 border border-gray-200"
                 >
                   Cancel
                 </motion.button>
@@ -167,7 +167,7 @@ export function AddCardModal({
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={!title.trim() || isSubmitting}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/30"
+                  className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg sm:rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/30"
                 >
                   {isSubmitting ? 'Creating...' : initialTask ? 'Update Task' : 'Create Task'}
                 </motion.button>

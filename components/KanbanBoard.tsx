@@ -385,70 +385,74 @@ export function KanbanBoard() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         {/* Top Header with Gradient */}
         <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-lg">
-          <div className="px-6 py-6">
+          <div className="px-4 sm:px-6 py-4 sm:py-6">
             {/* Title and View Selector */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <LayoutGrid size={24} className="text-white" />
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <LayoutGrid size={20} className="text-white sm:w-6 sm:h-6" />
                 </div>
-                <h1 className="text-2xl font-bold text-white tracking-tight">KanbanWave</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">KanbanWave</h1>
               </div>
-              <div className="flex items-center gap-2 text-white/80 text-sm">
+              <div className="flex items-center gap-2 text-white/80 text-xs sm:text-sm">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                <span>All data saved locally</span>
+                <span className="hidden sm:inline">All data saved locally</span>
+                <span className="sm:hidden">Saved locally</span>
               </div>
               <button
                 onClick={() => setIsChangelogModalOpen(true)}
-                className="ml-auto text-sm text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg transition-all duration-200 backdrop-blur-sm font-medium"
+                className="sm:ml-auto text-xs sm:text-sm text-white/90 hover:text-white hover:bg-white/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-all duration-200 backdrop-blur-sm font-medium self-start"
               >
-                What's New ✨
+                <span className="hidden sm:inline">What's New ✨</span>
+                <span className="sm:hidden">New ✨</span>
               </button>
             </div>
 
             {/* Action Toolbar */}
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <button
                 onClick={() => {
                   setSelectedColumnId('todo');
                   setIsAddCardModalOpen(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-600 text-sm font-semibold rounded-xl hover:bg-white/95 hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white text-indigo-600 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-white/95 hover:shadow-lg transition-all duration-200"
               >
-                <Plus size={18} />
-                New Task
+                <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span className="hidden sm:inline">New Task</span>
+                <span className="sm:hidden">New</span>
               </button>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20">
-                <Filter size={16} />
-                Filter
+              <button className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20">
+                <Filter size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Filter</span>
               </button>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20">
-                <ArrowUpDown size={16} />
-                Sort
+              <button className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20">
+                <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Sort</span>
               </button>
               <button
                 onClick={() => setIsExportImportModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 ml-auto border border-white/20"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl hover:bg-white/20 transition-all duration-200 sm:ml-auto border border-white/20"
                 title="Export/Import"
               >
-                <Save size={16} />
-                Save/Export
+                <Save size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Save/Export</span>
+                <span className="sm:hidden">Save</span>
               </button>
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm text-white text-sm font-medium rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
                 title="Settings"
               >
-                <Settings size={16} />
-                Settings
+                <Settings size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden lg:inline">Settings</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Kanban Board Container */}
-        <div className="p-8">
-          <div className="flex gap-4 overflow-x-auto pb-6">
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 sm:pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
             {columnsToDisplay.map((column) => (
               <ColumnComponent
                 key={column.id}

@@ -75,12 +75,12 @@ export function Card({ task, isDragging = false, onEdit, onViewDetails, onGenera
       onHoverEnd={() => setIsHovered(false)}
       onClick={() => onViewDetails?.(task)}
       className={`
-        group relative p-4 bg-white rounded-xl border
-        cursor-pointer transition-all duration-300
+        group relative p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border
+        cursor-pointer transition-all duration-300 active:scale-95
         ${
           isDragging
             ? 'opacity-60 shadow-2xl rotate-3 border-indigo-300 scale-105'
-            : 'border-gray-200 hover:shadow-xl hover:border-indigo-200 hover:-translate-y-1 hover:scale-102'
+            : 'border-gray-200 hover:shadow-xl hover:border-indigo-200 sm:hover:-translate-y-1 hover:scale-102'
         }
       `}
     >
