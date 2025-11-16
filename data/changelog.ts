@@ -6,6 +6,24 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.1.0',
+    date: '2025-01-16',
+    changes: [
+      '✨ NEW: AI Card Enhancer with 11 domain-specific templates',
+      '📋 Templates: General, Marketing, Artistic/Creative, Coding, Business, Law, Medicine, Construction, Hospitality, Finance, Personal Productivity',
+      '🎯 Each template provides specialized guidance for your task type',
+      '🤖 AI generates direct, actionable task descriptions (not requests)',
+      '👀 Preview enhanced content before applying',
+      '✅ Accept or reject AI suggestions with one click',
+      '⚡ Auto-save on accept for existing tasks (instant update)',
+      '🎨 Beautiful gradient UI for AI enhancement section',
+      '🔧 Fixed API key localStorage issue for better reliability',
+      'Enhanced mobile drag-and-drop with touch support',
+      'Improved scrollbar positioning for better UX',
+      'Visual refinements and animations throughout the app',
+    ],
+  },
+  {
     version: '1.0.0',
     date: '2025-01-06',
     changes: [
